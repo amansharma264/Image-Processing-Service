@@ -6,9 +6,9 @@ const imageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    public_id: {
+    fileName: {
       type: String,
-      required: true, // required to delete image from Cloudinary
+      required: true,
     },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
