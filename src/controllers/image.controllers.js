@@ -2,16 +2,25 @@ import { Image } from "../models/image.models.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { deleteFile } from "../utils/fileHandler.js";
 
 // Uploading image
 const uploadImage = asyncHandler(async (req, res) => {
-  if (!req.file) throw new ApiError(400, "No image found");
+  if (!req.file) {
+    throw new ApiError(400, "No image found");
+  }
+
+  // Upload to cloudinary
+  const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+  if (!cloudinaryResponse) {
+    throw new ApiError(500, "Failed to upload image to Cloudinary");
+  }
 
   // Save image info in MongoDB
   const image = await Image.create({
-    url: `/images/${req.file.filename}`, // Local URL
-    fileName: req.file.filename,
+    url: cloudinaryResponse.url,
+    fileName: cloudinaryResponse.original_filename,
     uploadedBy: req.user._id,
   });
 
@@ -34,7 +43,8 @@ const deleteImage = asyncHandler(async (req, res) => {
   const image = await Image.findById(req.params.id);
   if (!image) throw new ApiError(404, "Image not found");
 
-  // Delete from local storage first
+  // TODO: Add logic to delete from Cloudinary as well
+  // For now, only delete from the local directory
   await deleteFile(image.fileName);
 
   // Delete from DB
