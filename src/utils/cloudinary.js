@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import dotenv from "dotenv";
+// Environment variables are loaded automatically via the start script
 
 // Cloudinary configuration
 cloudinary.config({
@@ -21,6 +21,7 @@ const uploadOnCloudinary = async (filePathOrUrl) => {
     console.log("✅ Cloudinary upload success:", response.secure_url);
     return response;
   } catch (error) {
+    // This is the line (27) where the error is thrown
     console.error("❌ Cloudinary upload error:", error.message);
     throw new Error("Cloudinary Upload Failed: " + error.message);
   }
