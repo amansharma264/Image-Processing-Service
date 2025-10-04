@@ -10,7 +10,7 @@ import { app } from "./app.js";
 connectDB()
   .then(() => {
     // Start the server after successful DB connection
-    app.listen(process.env.PORT || 2004, () => {
+    app.listen(process.env.PORT || 2020, () => {
       console.log(`Server is running at port : ${process.env.PORT}`);
     });
   })

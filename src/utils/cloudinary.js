@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
-// Environment variables are loaded automatically via the start script
 
-// Cloudinary configuration
+
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
