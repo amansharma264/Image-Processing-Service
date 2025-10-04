@@ -1,32 +1,45 @@
-import {v2 as cloudinary} from "cloudinary"
-import { log } from "console";
-import fs from "fs"
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
 
-cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-        api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env.CLOUDINARY_API_SECRET
+dotenv.config(); // make sure .env variables are loaded
+
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Upload file or URL to Cloudinary
+const uploadOnCloudinary = async (filePathOrUrl) => {
+  try {
+    if (!filePathOrUrl) return null;
+
+    // Cloudinary supports both remote URLs and local file paths
+    const response = await cloudinary.uploader.upload(filePathOrUrl, {
+      resource_type: "auto", // auto-detect image/video
     });
 
+    console.log("✅ Cloudinary upload success:", response.secure_url);
+    return response;
+  } catch (error) {
+    console.error("❌ Cloudinary upload error:", error.message);
+    throw new Error("Cloudinary Upload Failed: " + error.message);
+  }
+};
 
-const uploadOnCloudinary = async (localFilePath) => {
-    try {
-        if(!localFilePath) return null
-        // upload the file on cloudinary
-        const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto"
-        })
-        // file has been uploaded successfully
-        // console.log("file is uploaded on Cloudinary", response.url);
+// Delete file from Cloudinary
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (!publicId) return null;
 
-        fs.unlinkSync(localFilePath)
-        return response;
+    const response = await cloudinary.uploader.destroy(publicId);
+    console.log("🗑️ Cloudinary delete:", response);
+    return response;
+  } catch (error) {
+    console.error("❌ Cloudinary delete error:", error.message);
+    throw new Error("Cloudinary Delete Failed: " + error.message);
+  }
+};
 
-        
-    } catch (error) {
-        fs.unlinkSync(localFilePath) // remove the locally saved temporary file as the upload operayion got failed
-        return null;
-    }
-}
-
-export {uploadOnCloudinary}
+export { uploadOnCloudinary, deleteFromCloudinary };
