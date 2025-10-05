@@ -10,6 +10,7 @@ This is an image processing service built with Node.js, Express, and MongoDB. It
   - **Image Management**: List and delete images stored in the database and on Cloudinary.
   - **Cloudinary Integration**: Utilizes Cloudinary for efficient cloud-based image storage and processing.
   - **Local File Handling**: Includes utilities for handling and deleting local files.
+  - **Image Transformation**: The API supports applying transformations to existing images on Cloudinary.
 
 ## Technologies Used
 
@@ -80,5 +81,6 @@ The API is served under the `/api/v1` base path.
   - `POST /upload`: Uploads an image (requires authentication).
   - `GET /`: Lists all images uploaded by the authenticated user.
   - `DELETE /:id`: Deletes a specific image by its ID (requires authentication).
+  - `POST /transform/:id`: Transforms a specific image by its ID (requires authentication). The request body should contain a `transformations` object with valid Cloudinary transformation parameters.
 
 https://roadmap.sh/projects/image-processing-service
