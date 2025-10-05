@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadImage, listImages, deleteImage } from "../controllers/image.controllers.js";
+import { uploadImage, listImages, deleteImage, transformImage } from "../controllers/image.controllers.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -9,6 +9,9 @@ router.route("/upload").post(
   verifyJWT,
   uploadImage
 );
+
+// Transform an image by ID
+router.route("/transform/:id").post(verifyJWT, transformImage);
 
 // Get all images
 router.route("/").get(verifyJWT, listImages);

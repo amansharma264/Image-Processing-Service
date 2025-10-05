@@ -58,4 +58,32 @@ const deleteImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Image deleted successfully"));
 });
 
-export { uploadImage, listImages, deleteImage };
+// Transforming an image
+const transformImage = asyncHandler(async (req, res) => {
+    const { transformations } = req.body;
+    const { id } = req.params;
+
+    if (!transformations || Object.keys(transformations).length === 0) {
+        throw new ApiError(400, "Transformations are required");
+    }
+
+    const image = await Image.findById(id);
+    if (!image) {
+        throw new ApiError(404, "Image not found");
+    }
+
+    // Call Cloudinary to apply the transformations
+    const transformedResponse = await uploadOnCloudinary(image.url, transformations);
+    if (!transformedResponse) {
+        throw new ApiError(500, "Failed to apply transformation on Cloudinary");
+    }
+
+    // Update the image entry in the database with the new URL and transformations
+    image.url = transformedResponse.url;
+    image.transformations = { ...image.transformations, ...transformations };
+    await image.save();
+
+    return res.status(200).json(new ApiResponse(200, "Image transformed successfully", image));
+});
+
+export { uploadImage, listImages, deleteImage, transformImage };

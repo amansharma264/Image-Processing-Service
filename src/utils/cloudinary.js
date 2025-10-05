@@ -1,7 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 
-
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -9,13 +7,14 @@ cloudinary.config({
 });
 
 // Upload file or URL to Cloudinary
-const uploadOnCloudinary = async (filePathOrUrl) => {
+const uploadOnCloudinary = async (filePathOrUrl, options = {}) => {
   try {
     if (!filePathOrUrl) return null;
 
     // Cloudinary supports both remote URLs and local file paths
     const response = await cloudinary.uploader.upload(filePathOrUrl, {
       resource_type: "auto", // auto-detect image/video
+      ...options, // Spread the transformation options here
     });
 
     console.log("✅ Cloudinary upload success:", response.secure_url);
